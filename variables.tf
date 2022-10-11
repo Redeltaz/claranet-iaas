@@ -1,4 +1,5 @@
 variable "public_secret_key" {
   type      = string
+  default   = "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQD31MsBFGuQOUuCOqlXHA7eR8oYNQokduxGtOPEGT6PYgaSktcwjQUBAGNmvt+6Pyoyg8dgmFgr7yqrJA55FZPBPKHl0D0rsZY5fNBPfslE32NUxbPrv/gALqVMa2YXoWAhnDMDOD/CNFlNSsjcJKFt4BrVaUBnzWrh7gyEmiaC3lNuwQlFA9Ed7Pj1G2PphN/jZtYEjdQPz/L+zTtbzacWEfgB15QOtf479VnRllMB6icpC/jnZMTd4KG1x8LI6XdakwoScskC4wTdAe9ZD8/3QxMN0ziGn1q8Lc4mPnxt7FeEWfOz4Al9p/GMu4afBSwwMaWiSvk1JUfQud+w9Xkl jttc_id_rsa"
   sensitive = true
 }

@@ -14,3 +14,6 @@ override.tf.json
 
 .terraformrc
 terraform.rc
+
+public-key.pem
+secret.json
