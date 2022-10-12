@@ -1,5 +1,5 @@
 variable "create" {
- type = bool 
+  type = bool
 }
 
 variable "name" {
@@ -11,22 +11,22 @@ variable "vpc_name" {
 }
 
 variable "key_pair_name" {
-  type = string
+  type        = string
   description = "Key pair to use for ssh connection to bastion"
 }
 
-variable "iam_bastion_profil_name" {
-  type = string
-  description = "IAM profile to use for the bastion"
+variable "iam_profil_name" {
+  type        = string
+  description = "IAM profile to attach"
 }
 
 variable "subnet_id" {
-  type = string
+  type        = string
   description = "ID of the subnet where the instances are launched"
 }
 
 variable "sg_id" {
-  type = string
+  type        = string
   description = "Security Group to attach to the instances"
 }
 
