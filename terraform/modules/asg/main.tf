@@ -2,7 +2,7 @@ resource "aws_launch_template" "asg_launch_template" {
   count = var.create ? 1 : 0
 
   name          = "${var.vpc_name}-vpc-${var.name}-launch-template"
-  image_id      = data.aws_ami.asg_launch_ami.id
+  image_id      = var.custom_ami ? data.aws_ami.asg_launch_custom_ami.id : data.aws_ami.asg_launch_base_ami.id
   instance_type = "t3.micro"
   key_name      = var.key_pair_name
 

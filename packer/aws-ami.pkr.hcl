@@ -8,19 +8,20 @@ packer {
 }
 
 locals {
-  profile = "claranet-sandbox-bu-spp"
-  ami_name = "aws-custom-debian-ami"
+  profile       = "claranet-sandbox-bu-spp"
+  ami_name      = "lc-iaas-ami-${formatdate("YYYYMMDDhhmmss", timestamp())}"
   instance_type = "t3.micro"
-  ami_region = "eu-west-1"
-  region = "eu-west-1"
+  ami_region    = "eu-west-1"
+  region        = "eu-west-1"
 }
 
 source "amazon-ebs" "aws_custom_debian_ami" {
-  ami_name = local.ami_name
-  ami_regions = [local.ami_region]
+  ami_name      = local.ami_name
+  ami_regions   = [local.ami_region]
   instance_type = local.instance_type
   region        = local.region
-  ssh_username = "admin"
+  profile       = local.profile
+  ssh_username  = "admin"
 
   source_ami_filter {
     filters = {
@@ -31,17 +32,28 @@ source "amazon-ebs" "aws_custom_debian_ami" {
   }
 
   tags = {
-    Name = local.ami_name
+    Name       = local.ami_name
     created_by = "packer"
-    owner = "lucas.campistron@fr.clara.net"
+    owner      = "lucas.campistron@fr.clara.net"
   }
 }
 
 build {
   sources = ["source.amazon-ebs.aws_custom_debian_ami"]
-  name = "aws-custom_debian-ami-build"
+  name    = "aws-custom_debian-ami-build"
+
+  source "source.amazon-ebs.aws_custom_debian_ami" {
+    ssh_username = "admin"
+  }
 
   provisioner "shell" {
     inline = ["mkdir /home/admin/test"]
+  }
+
+  provisioner "ansible" {
+    ansible_env_vars       = ["ANSIBLE_LOCAL_TEMP=$HOME/.ansible/tmp", "ANSIBLE_REMOTE_TEMP=$HOME/.ansible/tmp"]
+    ansible_ssh_extra_args = ["-oHostKeyAlgorithms=+ssh-rsa -oPubkeyAcceptedKeyTypes=+ssh-rsa"]
+    extra_arguments        = ["--scp-extra-args", "'-O'"]
+    playbook_file          = "./playbook.yml"
   }
 }

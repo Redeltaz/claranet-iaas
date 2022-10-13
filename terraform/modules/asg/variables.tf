@@ -33,3 +33,8 @@ variable "sg_id" {
 variable "subnet_az" {
   type = string
 }
+
+variable "custom_ami" {
+  type        = bool
+  description = "Does the asg use the default or custom ami ?"
+}

@@ -1,10 +1,20 @@
-data "aws_ami" "asg_launch_ami" {
+data "aws_ami" "asg_launch_base_ami" {
   most_recent = true
   owners      = ["136693071363"]
 
   filter {
     name   = "name"
     values = ["debian-11-amd64-*"]
+  }
+}
+
+data "aws_ami" "asg_launch_custom_ami" {
+  most_recent = true
+  owners      = ["609291635675"]
+
+  filter {
+    name   = "name"
+    values = ["lc-iaas-ami-*"]
   }
 }
 

@@ -90,9 +90,9 @@ resource "aws_security_group" "main_sg" {
   vpc_id = aws_vpc.vpc.id
 
   ingress {
-    from_port        = 22
-    to_port          = 22
-    protocol         = "tcp"
+    from_port        = 0
+    to_port          = 0
+    protocol         = "-1"
     cidr_blocks      = ["0.0.0.0/0"]
     ipv6_cidr_blocks = ["::/0"]
   }
@@ -117,6 +117,7 @@ module "public_asg" {
   subnet_id       = aws_subnet.public_subnet[0].id
   sg_id           = aws_security_group.main_sg.id
   subnet_az       = var.public_subnet_az
+  custom_ami      = var.private_subnet
 }
 
 
