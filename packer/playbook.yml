@@ -1,8 +1,10 @@
 ---
 - hosts: all
   become: yes
-  tasks:
+  roles:
+     - claranet-cloud-image
 
+  tasks:
   - name: Update and upgrade apt packages
     apt:
       upgrade: yes
@@ -11,4 +13,33 @@
   - name: "install nginx"
     apt:
       name: ['nginx']
+      state: latest
+
+  - name: "install php8.1 necessary packages"
+    apt:
+      name: ["lsb-release", "apt-transport-https", "ca-certificates", "wget"]
+      state: latest
+
+  - name: "import php apt repository key"
+    get_url: url=https://packages.sury.org/php/apt.gpg dest=/etc/apt/trusted.gpg.d/php.gpg
+
+  - name: "get lsb release"
+    command: lsb_release -sc
+    register: lsbr
+
+  - name: "import source"
+    command: echo "deb https://packages.sury.org/php/ {{ lsbr.stdout }} main"
+    register: phpsource
+
+  - name: "write source"
+    copy: content="{{ phpsource.stdout }}" dest=/etc/apt/sources.list.d/php.list
+
+  - name: "repository update package index "
+    apt:
+      upgrade: yes
+      update_cache: yes
+
+  - name: "install php8.1-fpm"
+    apt:
+      name: ["php8.1-fpm"]
       state: latest

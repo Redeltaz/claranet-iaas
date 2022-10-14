@@ -42,10 +42,6 @@ build {
   sources = ["source.amazon-ebs.aws_custom_debian_ami"]
   name    = "aws-custom_debian-ami-build"
 
-  source "source.amazon-ebs.aws_custom_debian_ami" {
-    ssh_username = "admin"
-  }
-
   provisioner "shell" {
     inline = ["mkdir /home/admin/test"]
   }
