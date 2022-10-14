@@ -16,17 +16,12 @@ variable "private_subnet" {
   description = "Does this vpc need a private subnet"
 }
 
-variable "public_subnet_az" {
-  type    = string
-  default = "eu-west-1b"
+variable "subnet_az" {
+  type = list(any)
 }
 
-variable "private_subnet_az" {
-  type    = string
-  default = null
-}
 variable "public_subnet_cidr_block" {
-  type = string
+  type = list(any)
 }
 
 variable "private_subnet_cidr_block" {

@@ -12,7 +12,7 @@ resource "aws_launch_template" "asg_launch_template" {
 
   network_interfaces {
     associate_public_ip_address = true
-    subnet_id                   = var.subnet_id
+    subnet_id                   = var.subnet_ids[0]
     security_groups             = [var.sg_id]
   }
 
@@ -27,11 +27,11 @@ resource "aws_launch_template" "asg_launch_template" {
 resource "aws_autoscaling_group" "asg" {
   count = var.create ? 1 : 0
 
-  name               = "${var.vpc_name}-vpc-${var.name}-asg"
-  availability_zones = [var.subnet_az]
-  desired_capacity   = 1
-  max_size           = 1
-  min_size           = 1
+  name                = "${var.vpc_name}-vpc-${var.name}-asg"
+  vpc_zone_identifier = var.subnet_ids
+  desired_capacity    = 1
+  max_size            = 1
+  min_size            = 1
 
   launch_template {
     id      = aws_launch_template.asg_launch_template[0].id

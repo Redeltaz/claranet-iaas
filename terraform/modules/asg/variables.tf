@@ -20,9 +20,9 @@ variable "iam_profil_name" {
   description = "IAM profile to attach"
 }
 
-variable "subnet_id" {
-  type        = string
-  description = "ID of the subnet where the instances are launched"
+variable "subnet_ids" {
+  type        = list(any)
+  description = "ID of the subnets where the instances are launched"
 }
 
 variable "sg_id" {
@@ -31,7 +31,7 @@ variable "sg_id" {
 }
 
 variable "subnet_az" {
-  type = string
+  type = list(any)
 }
 
 variable "custom_ami" {

@@ -79,12 +79,13 @@ module "support_vpc" {
   vpc_name                 = "support"
   vpc_cidr_block           = "172.31.0.0/16"
   peered_vpc_cidr_block    = "10.1.0.0/16"
-  public_subnet_az         = "eu-west-1b"
+  subnet_az                = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
   private_subnet           = false
-  public_subnet_cidr_block = "172.31.1.0/24"
+  public_subnet_cidr_block = ["172.31.1.0/24", "172.31.2.0/24", "172.31.3.0/24"]
   key_pair_name            = aws_key_pair.main_key_pair.key_name
   iam_profil_name          = aws_iam_instance_profile.iam_main_profil.name
   vpc_peering_id           = aws_vpc_peering_connection.support_preprod_vpc_peering.id
+  create_eip               = true
 }
 
 module "preprod_vpc" {
@@ -93,11 +94,10 @@ module "preprod_vpc" {
   vpc_name                  = "preprod"
   vpc_cidr_block            = "10.1.0.0/16"
   peered_vpc_cidr_block     = "172.31.0.0/16"
-  public_subnet_az          = "eu-west-1b"
-  private_subnet_az         = "eu-west-1b"
+  subnet_az                 = ["eu-west-1a", "eu-west-1b", "eu-west-1c"]
   private_subnet            = true
-  public_subnet_cidr_block  = "10.1.1.0/24"
-  private_subnet_cidr_block = "10.1.2.0/24"
+  public_subnet_cidr_block  = ["10.1.1.0/24", "10.1.2.0/24", "10.1.3.0/24"]
+  private_subnet_cidr_block = "10.1.4.0/24"
   key_pair_name             = aws_key_pair.main_key_pair.key_name
   iam_profil_name           = aws_iam_instance_profile.iam_main_profil.name
   vpc_peering_id            = aws_vpc_peering_connection.support_preprod_vpc_peering.id
@@ -107,4 +107,16 @@ resource "aws_vpc_peering_connection" "support_preprod_vpc_peering" {
   peer_vpc_id = module.support_vpc.vpc_id
   vpc_id      = module.preprod_vpc.vpc_id
   auto_accept = true
+}
+
+resource "aws_lb" "main_alb" {
+  name                       = "preprod-alb"
+  internal                   = false
+  load_balancer_type         = "application"
+  enable_deletion_protection = true
+  subnets = module.preprod_vpc.public_subnet_ids
+
+  tags = {
+    Name = "preprod-alb"
+  }
 }

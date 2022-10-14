@@ -7,13 +7,13 @@ resource "aws_vpc" "vpc" {
 }
 
 resource "aws_subnet" "public_subnet" {
-  count             = 1
+  count             = length(var.public_subnet_cidr_block)
   vpc_id            = aws_vpc.vpc.id
-  cidr_block        = var.public_subnet_cidr_block
-  availability_zone = var.public_subnet_az
+  cidr_block        = var.public_subnet_cidr_block[count.index]
+  availability_zone = var.subnet_az[count.index]
 
   tags = {
-    Name = "${var.vpc_name}-public-subnet"
+    Name = "${var.vpc_name}-public-subnet-${count.index + 1}"
   }
 }
 
@@ -22,7 +22,7 @@ resource "aws_subnet" "private_subnet" {
 
   vpc_id            = aws_vpc.vpc.id
   cidr_block        = var.private_subnet_cidr_block
-  availability_zone = var.public_subnet_az
+  availability_zone = var.subnet_az[1]
 
   tags = {
     Name = "${var.vpc_name}-private-subnet"
@@ -72,10 +72,10 @@ resource "aws_main_route_table_association" "main_route_association" {
 }
 
 
-# resource "aws_eip" "bastion_eip" {
-#   count = var.create_eip ? 1 : 0
-#   vpc = true
-# }
+resource "aws_eip" "bastion_eip" {
+  count = var.create_eip ? 1 : 0
+  vpc = true
+}
 
 resource "aws_route53_zone" "private_dns_zone" {
   name = "${var.vpc_name}-vpc-lucas.com"
@@ -114,9 +114,9 @@ module "public_asg" {
   vpc_name        = var.vpc_name
   key_pair_name   = var.key_pair_name
   iam_profil_name = var.iam_profil_name
-  subnet_id       = aws_subnet.public_subnet[0].id
+  subnet_ids      = [for subnet in aws_subnet.public_subnet : subnet.id]
   sg_id           = aws_security_group.main_sg.id
-  subnet_az       = var.public_subnet_az
+  subnet_az       = var.subnet_az
   custom_ami      = var.private_subnet
 }
 
