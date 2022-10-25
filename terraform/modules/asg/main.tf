@@ -22,6 +22,8 @@ resource "aws_launch_template" "asg_launch_template" {
 
   # TODO Error with aws cli command that didn't change the EIP
   #user_data = base64encode(data.template_file.user_data_template.rendered)
+
+    user_data = base64encode(data.template_file.user_data_template.rendered)
 }
 
 resource "aws_autoscaling_group" "asg" {

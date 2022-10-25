@@ -74,7 +74,7 @@ resource "aws_main_route_table_association" "main_route_association" {
 
 resource "aws_eip" "bastion_eip" {
   count = var.create_eip ? 1 : 0
-  vpc = true
+  vpc   = true
 }
 
 resource "aws_route53_zone" "private_dns_zone" {

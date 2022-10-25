@@ -69,7 +69,7 @@ resource "aws_iam_policy_attachment" "attach_main_iam_policy" {
 }
 
 resource "aws_iam_instance_profile" "iam_main_profil" {
-  name = "main_iam_profil"
+  name = "lucas_main_iam_profil"
   role = aws_iam_role.main_role.name
 }
 
@@ -109,14 +109,55 @@ resource "aws_vpc_peering_connection" "support_preprod_vpc_peering" {
   auto_accept = true
 }
 
-resource "aws_lb" "main_alb" {
-  name                       = "preprod-alb"
-  internal                   = false
-  load_balancer_type         = "application"
-  enable_deletion_protection = true
-  subnets = module.preprod_vpc.public_subnet_ids
+#resource "aws_lb" "main_alb" {
+#name                       = "preprod-alb"
+#internal                   = false
+#load_balancer_type         = "application"
+#enable_deletion_protection = true
+#subnets = module.preprod_vpc.public_subnet_ids
+
+#tags = {
+#Name = "preprod-alb"
+#}
+#}
+
+resource "aws_s3_bucket" "app_bucket" {
+  bucket = "lucas-app-bucket"
 
   tags = {
-    Name = "preprod-alb"
+    Name        = "lucas-iaas-app-bucket"
   }
 }
+
+resource "aws_db_instance" "app_rds" {
+  allocated_storage    = 10
+  db_name              = "lucas_iaas_rds"
+  engine               = "mysql"
+  instance_class       = "db.t3.micro"
+  username             = "lucas"
+  password             = "password"
+}
+
+resource "aws_route53_record" "rds_record" {
+  zone_id = module.preprod_vpc.dns_id
+  name    = "www.lucas-iaas-rds.com"
+  type    = "CNAME"
+  ttl     = 300
+  records = [aws_db_instance.app_rds.address]
+}
+
+resource "aws_elasticache_cluster" "app_elasticache" {
+  cluster_id           = "cluster-iaas-lucas"
+  engine               = "redis"
+  node_type            = "cache.t3.micro"
+  num_cache_nodes      = 1
+  port                 = 6379
+}
+
+#resource "aws_route53_record" "elasticache_record" {
+  #zone_id = module.preprod_vpc.dns_id
+  #name    = "www.lucas-iaas-elasticache.com"
+  #type    = "CNAME"
+  #ttl     = 300
+  #records = [aws_elasticache_cluster.app_elasticache.cluster_address]
+#}
