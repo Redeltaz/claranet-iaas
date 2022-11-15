@@ -109,17 +109,16 @@ resource "aws_vpc_peering_connection" "support_preprod_vpc_peering" {
   auto_accept = true
 }
 
-#resource "aws_lb" "main_alb" {
-#name                       = "preprod-alb"
-#internal                   = false
-#load_balancer_type         = "application"
-#enable_deletion_protection = true
-#subnets = module.preprod_vpc.public_subnet_ids
+resource "aws_lb" "main_alb" {
+    name                       = "preprod-alb"
+    internal                   = false
+    load_balancer_type         = "application"
+    subnets = module.preprod_vpc.public_subnet_ids
 
-#tags = {
-#Name = "preprod-alb"
-#}
-#}
+    tags = {
+        Name = "preprod-alb"
+    }
+}
 
 resource "aws_s3_bucket" "app_bucket" {
   bucket = "lucas-app-bucket"

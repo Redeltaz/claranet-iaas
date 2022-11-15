@@ -20,8 +20,12 @@ data "aws_ami" "asg_launch_custom_ami" {
 
  data "template_file" "user_data_template" {
    template = <<eof
-    aws s3 cp s3://lucas-iaas-bucket/symfony-app/symfony-app.tar.gz ./
-    tar -xvf symfony-app.tar.gz
+    apt update
+    apt install ruby-full
+    apt install wget
+    wget https://aws-codedeploy-eu-west-1.s3.eu-west-1.amazonaws.com/latest/install
+    chmod +x ./install
+    ./install auto
    eof
    #template = <<eof
      ##!/bin/bash
